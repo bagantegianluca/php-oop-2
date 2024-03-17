@@ -1,28 +1,21 @@
 <?php
+require_once __DIR__ . '/classes/item.php';
+require_once __DIR__ . '/classes/pet.php';
+require_once __DIR__ . '/classes/tag.php';
+require_once __DIR__ . '/database/db.php';
 
-class Item
+function getHtmlClass($tag)
 {
-    public function __construct(public string $item, public string $description, public string $img, public int $price, public array $tags, public array $pets)
-    {
-        $this->item = $item;
-        $this->description = $description;
-        $this->img = $img;
-        $this->price = $price;
-        $this->tags = $tags;
-        $this->pets = $pets;
+    if ($tag == 'Gioco') {
+        return 'toy';
+    } elseif ($tag == 'Cibo') {
+        return 'food';
+    } elseif ($tag == 'Igiene') {
+        return 'healthy';
+    } elseif ($tag == 'Addestramento') {
+        return 'teaching';
     }
 }
-
-$items = [
-    new Item('SK001', 'Osso grattadenti', 'osso.jpg',  10, ['Gioco'], ['Cane']),
-    new Item('SK002', 'Palla rimbalzina', 'palla.jpg', 5, ['Gioco', 'Addestramento'], ['Cane', 'Gatto']),
-    new Item('SK003', 'Carne in scatola', 'carne.jpg', 15, ['Cibo'], ['Cane']),
-    new Item('SK004', 'Croccantini', 'croccantini.jpg', 25, ['Cibo'], ['Cane', 'Gatto']),
-    new Item('SK005', 'Lettiera', 'lettiera.jpg', 50, ['Igiene'], ['Gatto'])
-
-];
-
-/* var_dump($items); */
 ?>
 
 <!DOCTYPE html>
@@ -33,6 +26,12 @@ $items = [
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PHP-OOP-2</title>
 
+    <!-- Import Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Import Font Awesome 6.5.1 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <!-- Import Bootstrap -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@latest/dist/css/bootstrap.min.css">
 </head>
@@ -40,27 +39,35 @@ $items = [
 <body>
 
     <header>
-        <h1>Pet e-commerce</h1>
+        <div class="container my-3">
+            <h1>Pet e-commerce</h1>
+        </div>
     </header>
 
     <main>
         <div class="container">
-            <div class="row">
+            <div class="row g-3">
                 <?php foreach ($items as $item) : ?>
-                    <div class="col">
-                        <div class="card">
-                            <div class="card-header">
+                    <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                        <div class="card h-100">
+                            <div class="card-header fw-bold d-flex justify-content-between">
                                 <?= $item->item ?>
+                                <ul class="list-unstyled m-0">
+                                    <?php foreach ($item->pets as $pet) : ?>
+                                        <li class="d-inline-block"><?= ($pet->petType == 'Cane') ? '<i style="color: brown" class="fa-solid fa-dog"></i>' : '<i style="color: orange" class="fa-solid fa-cat"></i>' ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
                             </div>
                             <div class="card-body">
-                                <img src="<?= $item->img ?>" alt="<?= $item->description ?>">
-                                <p><?= $item->description ?></p>
-                                <p><?= $item->price ?></p>
+                                <img class="w-100" src="<?= $item->img ?>" alt="<?= $item->description ?>">
+                                <hr>
+                                <p class="m-0"><?= $item->description ?></p>
+                                <p class="fw-bold m-0">€ <?= number_format($item->price, 2, ',', '.') ?></p>
                             </div>
                             <div class="card-footer">
-                                <ul class="list-unstyled">
-                                    <?php foreach ($item->pets as $pet) : ?>
-                                        <li class="d-inline-block"><?= $pet ?></li>
+                                <ul class="list-unstyled m-0">
+                                    <?php foreach ($item->tags as $tag) : ?>
+                                        <li class="d-inline-block <?= getHtmlClass($tag->tag) ?> mb-1"><?= $tag->tag ?></li>
                                     <?php endforeach; ?>
                                 </ul>
                             </div>
